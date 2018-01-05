@@ -1,6 +1,7 @@
 # Golang Blog
 
 ## ProjectDir:
+	src/porject:
 	-	|——main.go		入口文件
 	-	|——conf			配置文件和处理模块
 	-	|——controllers	控制器入口
@@ -11,3 +12,6 @@
 			|——js		js脚本文件
 			|——img		图片文件
 	-	|——views		HTML前端
+
+##import package
+	src/github.com
