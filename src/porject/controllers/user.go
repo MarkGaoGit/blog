@@ -15,16 +15,19 @@ func (u *UserController) Get() {
 }
 
 func (u *UserController) Login() {
-	u.Data["msg"] = "This is login page"
-	u.TplName = "user.html"
+	u.Data["title"] = "Login Mark"
+	u.TplName = "login.html"
+}
+
+func (u *UserController) Loginin() {
+	u.Ctx.WriteString("Login ok!")
 }
 
 func (u *UserController) Register() {
-	u.Data["msg"] = "This is register page"
-	u.TplName = "user.html"
+	u.Data["title"] = "Register Mark"
+	u.TplName = "register.html"
 }
 
 func (u *UserController) RegisterUser() {
-	u.Data["msg"] = "This is create user page"
-	u.TplName = "user.html"
+	u.Ctx.WriteString("Register ok!")
 }
