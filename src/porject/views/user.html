@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		body{ margin:0; padding: 0; }
+		#a { 
+			height:300px; 
+			width:300px; 
+			font-size: 24px; 
+			text-align: center; 
+			border:2px solid red;
+			border-radius:10px;
+			position:absolute;
+			top: 50%;
+			left:50%;
+			margin-top:-150px;
+			margin-left:-150px;
+			overflow: auto;
+		}
+		a { text-decoration:none; }
+	</style>
+</head>
+<body>
+	<div id="a">
+		{{.msg}}
+		
+		<form method="post" action="/user/register" >
+			<a href="/user/register" > Register go</a><br/>
+			<a href="/user" >Login in</a><br/>
+			<input type="submit" value="POST Data" />
+		</form>
+	</div>
+</body>
+</html>

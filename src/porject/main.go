@@ -7,5 +7,6 @@ import (
 )
 
 func main() {
+	beego.SetStaticPath("/static", "static") //设置静态文件路径
 	beego.Run()
 }
