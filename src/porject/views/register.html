@@ -42,6 +42,10 @@
                   <input type="password" class="form-control" name="password" placeholder="Password">
                   <div class="input-group-addon"><i class="fa fa-key"></i></div>
                 </div>
+				<div class="input-group">
+                  <input type="text" class="form-control" name="age" placeholder="age">
+                  <div class="input-group-addon"></div>
+                </div>
               </section>
               <section class="controls">
                 <div class="checkbox check-transparent">
@@ -53,6 +57,7 @@
                 <button class="btn btn-greensea">Register</button>
 				<span>or</span>
 				<a href="/" class="h3 btn btn-info">Go index</a>
+				{{.xsrfdata}}
               </section>
             </form>
           </div>
