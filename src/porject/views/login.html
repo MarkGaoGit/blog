@@ -6,7 +6,8 @@
     <meta charset="UTF-8" />
     <!-- Bootstrap -->
     <link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+     <link href="/static/css/bootstrap/bootstrap.css" rel="stylesheet">
+   <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/bootstrap/bootstrap-checkbox.css">
 
     <link href="/static/css/bootstrap/minimal.css" rel="stylesheet">
@@ -33,7 +34,7 @@
             <img src="/static/img/logo-big.png" alt class="logo">
             <h1><strong>Welcome {{.title}}</strong></h1>
 
-            <form id="form-signin" class="form-signin" method="post" action="/user/login">
+            <form id="form-signin" class="form-signin" method="post" action='{{urlfor "UserController.Loginin"}}'>
               <section>
                 <div class="input-group">
                   <input type="text" class="form-control" name="username" placeholder="Username">
@@ -49,9 +50,12 @@
                   <input type="checkbox" value="1" id="remember" checked>
                   <label for="remember">Remember me</label>
                 </div>
-                <a href="/user/register" class="h1">Register</a>
+                <a href='{{urlfor "UserController.Register"}}' class="h1">Register</a>
               </section>
               <section class="log-in">
+				 <div class="input-group color-red h4 text-center">
+	               <p>{{.error}}</p>
+	             </div>
                 <button class="btn btn-greensea">Log In</button>
 				<span>or</span>
 				<a href="/" class="h3 btn btn-info">Go index</a>

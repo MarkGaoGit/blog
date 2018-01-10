@@ -27,9 +27,12 @@ func (u *UserController) Login() {
 		u.Data["title"] = "Login Mark"
 		u.XSRFExpire = 7200
 		u.Data["xsrfdata"] = template.HTML(u.XSRFFormHTML())
+
+		flash := beego.ReadFromRequest(&u.Controller) //login error message
+		u.Data["error"] = flash.Data["error"]
+
 		u.TplName = "login.html"
 	} else {
-
 		u.Data["user"] = userMsg
 		u.TplName = "loginok.html"
 
@@ -46,9 +49,10 @@ func (u *UserController) Loginin() {
 	passWord := u.GetString("password")
 
 	if ok, checkMsg := UserRegx(userName, passWord); !ok {
-		u.Data["loginMsg"] = checkMsg
-		u.TplName = "loginok.html"
-		//u.StopRun()//TODO 目前不知道怎么跳出程序
+		flash := beego.NewFlash() //flash 传递错误信息
+		flash.Error(checkMsg)
+		flash.Store(&u.Controller)
+		u.Redirect("/user", 302)
 
 	}
 

@@ -32,7 +32,7 @@
           <div class="inside-block">
             <img src="/static/img/logo-big.png" alt class="logo">
             <h1><strong>Welcome {{.title}}</strong></h1>
-            <form id="form-signin" class="form-signin" method="post" action="/user/register">
+            <form id="form-signin" class="form-signin" method="post" action='{{urlfor "UserController.RegisterUser"}}'>
               <section>
                 <div class="input-group">
                   <input type="text" class="form-control" name="username" placeholder="Username">
@@ -51,7 +51,7 @@
                 <div class="checkbox check-transparent">
                   
                 </div>
-                <a href="/user" class="h1">Login</a>
+                <a href='{{urlfor "UserController.Login"}}' class="h1">Login</a>
               </section>
               <section class="log-in">
                 <button class="btn btn-greensea">Register</button>

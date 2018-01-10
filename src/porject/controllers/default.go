@@ -14,10 +14,10 @@ func (c *MainController) Index() {
 
 	userMsg := c.GetSession("user")
 	if userMsg == nil {
-		c.Data["loginUrl"] = "/user"
+		c.Data["loginUrl"] = c.URLFor("UserController.Login")
 		c.Data["login"] = "LOGIN"
 	} else {
-		c.Data["loginUrl"] = "/user/loginOut"
+		c.Data["loginUrl"] = c.URLFor("UserController.LoginOut")
 		c.Data["login"] = "LOGIN OUT"
 	}
 
