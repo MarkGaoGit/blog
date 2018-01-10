@@ -17,32 +17,70 @@ func (u *UserController) Get() {
 	//也可以使用 u.Ctx.WriteString("XXX") 直接输出
 }
 
+/*
+ *	user loginPage
+ */
 func (u *UserController) Login() {
-	u.Data["title"] = "Login Mark"
-	u.XSRFExpire = 7200
-	u.Data["xsrfdata"] = template.HTML(u.XSRFFormHTML())
-	u.TplName = "login.html"
+
+	userMsg := u.GetSession("user")
+	if userMsg == nil {
+		u.Data["title"] = "Login Mark"
+		u.XSRFExpire = 7200
+		u.Data["xsrfdata"] = template.HTML(u.XSRFFormHTML())
+		u.TplName = "login.html"
+	} else {
+
+		u.Data["user"] = userMsg
+		u.TplName = "loginok.html"
+
+	}
+
 }
 
+/*
+ *	user login
+ */
 func (u *UserController) Loginin() {
 	//get user login message
 	userName := u.GetString("username")
 	passWord := u.GetString("password")
 
 	if ok, checkMsg := UserRegx(userName, passWord); !ok {
-		u.Ctx.WriteString(checkMsg)
-		u.StopRun()
+		u.Data["loginMsg"] = checkMsg
+		u.TplName = "loginok.html"
+		//u.StopRun()//TODO 目前不知道怎么跳出程序
+
 	}
 
 	if userName == "mark" && passWord == "123" {
-		u.Ctx.WriteString("Logint ok !")
-		u.Ctx.WriteString("LoginName:" + userName + "LoginPwd:" + passWord)
+
+		userMsg := make(map[string]string)
+		userMsg["username"] = userName
+		userMsg["password"] = passWord
+
+		u.SetSession("user", userMsg) //存入session
+
+		u.Data["user"] = userMsg
+		u.Data["loginMsg"] = "Login ok!"
+
 	} else {
-		u.Ctx.WriteString("Login password error")
+		u.Data["loginMsg"] = "Login password error"
 	}
+	u.TplName = "loginok.html"
 
 }
 
+/*
+ *	user loginOut
+ */
+func (u *UserController) LoginOut() {
+	u.DelSession("user")
+	u.TplName = "login.html"
+}
+
+/*
+ *	user registerPage
+ */
 func (u *UserController) Register() {
 	u.Data["title"] = "Register Mark"
 	u.XSRFExpire = 7200
@@ -56,6 +94,9 @@ type user struct {
 	Age      int         `form:"age"`
 }
 
+/*
+ *	user register
+ */
 func (u *UserController) RegisterUser() {
 	//get user register message  example:1
 	userName := u.GetString("username")
@@ -77,6 +118,9 @@ func (u *UserController) RegisterUser() {
 	u.Ctx.WriteString("Register ok!")
 }
 
+/*
+ *	check user register
+ */
 func UserRegx(username string, password string) (bool, string) {
 
 	if username == "" {
