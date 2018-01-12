@@ -16,3 +16,8 @@
 ## import package
 	- src/github.com
 	- bootstrap
+	
+## github package
+	- validation 
+		go get  github.com/astaxie/beego/validation		install
+		go test github.com/astaxie/beego/validation		testing

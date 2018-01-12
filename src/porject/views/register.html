@@ -54,6 +54,9 @@
                 <a href='{{urlfor "UserController.Login"}}' class="h1">Login</a>
               </section>
               <section class="log-in">
+			<div class="input-group color-red h4 text-center">
+	               <p>{{.error}}</p>
+	             </div>
                 <button class="btn btn-greensea">Register</button>
 				<span>or</span>
 				<a href="/" class="h3 btn btn-info">Go index</a>

@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"fmt"
 	"html/template"
-	"strconv"
+	"strings"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/validation"
 )
 
 type UserController struct {
@@ -89,13 +91,15 @@ func (u *UserController) Register() {
 	u.Data["title"] = "Register Mark"
 	u.XSRFExpire = 7200
 	u.Data["xsrfdata"] = template.HTML(u.XSRFFormHTML())
+	flash := beego.ReadFromRequest(&u.Controller) //login error message
+	u.Data["error"] = flash.Data["error"]
 	u.TplName = "register.html"
 }
 
 type user struct {
-	Username interface{} `form:"username"` //解析时 首字母必须大写
-	Password interface{} `form:"password"`
-	Age      int         `form:"age"`
+	Username string `valid:"Required;Match(/\s/)"` //first not admin
+	Password string `valid:"Required;Match(/\d\s/)"`
+	Age      int    `valid:""` // age: 1 ~ 130
 }
 
 /*
@@ -105,12 +109,6 @@ func (u *UserController) RegisterUser() {
 	//get user register message  example:1
 	userName := u.GetString("username")
 	pwd := u.GetString("password")
-	//get int type
-	age := u.Input().Get("age")
-	intAge, err := strconv.Atoi(age) //转为int64
-	if err != nil && intAge < 1 {
-		u.Ctx.WriteString("Age error")
-	}
 
 	//get user register message  example:2
 	userMsg := user{}
@@ -118,8 +116,35 @@ func (u *UserController) RegisterUser() {
 		u.Ctx.WriteString("Register message error!")
 	}
 
-	u.Ctx.WriteString("LoginName:" + userName + "LoginPwd:" + pwd)
-	u.Ctx.WriteString("Register ok!")
+	valid := validation.Validation{}
+	res, err := valid.Valid(&userMsg)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if !res {
+		flash := beego.NewFlash() //flash 传递错误信息
+
+		for _, err := range valid.Errors {
+			fmt.Println(err.Key, err.Message) //print error
+			flash.Error(err.Key + ":" + err.Message)
+			flash.Store(&u.Controller)
+		}
+		u.Redirect("/user/register", 302)
+	}
+
+	userSession := make(map[string]string)
+	userSession["username"] = userName
+	userSession["password"] = pwd
+
+	u.SetSession("user", userSession) //存入session
+
+	u.Redirect(u.URLFor("MainController.Index"), 302)
+}
+
+func (u *user) Valid(v *validation.Validation) {
+	if strings.Index(u.Username, "admin") != -1 {
+		v.SetError("Username", "The username can not start with admin")
+	}
 }
 
 /*
