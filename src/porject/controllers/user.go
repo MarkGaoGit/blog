@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/validation"
 )
 
@@ -42,6 +43,20 @@ func (u *UserController) Login() {
 
 }
 
+type User struct {
+	Id       int
+	Name     string
+	Prov     string
+	Time     int
+	Password string
+}
+
+func init() {
+	// 需要在init中注册定义的model
+	orm.RegisterModel(new(User))
+	//	orm.RegisterModelWithPrefix("tp_", new(User))
+}
+
 /*
  *	user login
  */
@@ -58,20 +73,36 @@ func (u *UserController) Loginin() {
 
 	}
 
-	if userName == "mark" && passWord == "123" {
+	table := orm.NewOrm()
+	user := User{Name: "mark"}
 
-		userMsg := make(map[string]string)
-		userMsg["username"] = userName
-		userMsg["password"] = passWord
+	err := table.Read(&user) //read user message
 
-		u.SetSession("user", userMsg) //存入session
-
-		u.Data["user"] = userMsg
-		u.Data["loginMsg"] = "Login ok!"
-
+	if err == orm.ErrNoRows {
+		flash := beego.NewFlash() //flash 传递错误信息
+		flash.Error("The user is not registered, please register first and then log in")
+		flash.Store(&u.Controller)
+		u.Redirect("/user", 302)
 	} else {
-		u.Data["loginMsg"] = "Login password error"
+
+		if passWord != user.Password {
+			flash := beego.NewFlash() //flash 传递错误信息
+			flash.Error("The login password error, please login in again")
+			flash.Store(&u.Controller)
+			u.Redirect("/user", 302)
+		} else {
+			userMsg := make(map[string]string)
+			userMsg["name"] = userName
+			userMsg["prov"] = user.Prov
+			userMsg["password"] = passWord
+			u.SetSession("user", userMsg) //存入session
+
+			u.Data["user"] = userMsg
+			u.Data["loginMsg"] = "Login ok!"
+		}
+
 	}
+
 	u.TplName = "loginok.html"
 
 }
@@ -96,7 +127,7 @@ func (u *UserController) Register() {
 	u.TplName = "register.html"
 }
 
-type user struct {
+type UserRegister struct {
 	Username string `valid:"Required;Match(/\s/)"` //first not admin
 	Password string `valid:"Required;Match(/\d\s/)"`
 	Age      int    `valid:""` // age: 1 ~ 130
@@ -111,7 +142,7 @@ func (u *UserController) RegisterUser() {
 	pwd := u.GetString("password")
 
 	//get user register message  example:2
-	userMsg := user{}
+	userMsg := UserRegister{}
 	if err := u.ParseForm(&userMsg); err != nil {
 		u.Ctx.WriteString("Register message error!")
 	}
@@ -141,7 +172,7 @@ func (u *UserController) RegisterUser() {
 	u.Redirect(u.URLFor("MainController.Index"), 302)
 }
 
-func (u *user) Valid(v *validation.Validation) {
+func (u *UserRegister) Valid(v *validation.Validation) {
 	if strings.Index(u.Username, "admin") != -1 {
 		v.SetError("Username", "The username can not start with admin")
 	}
